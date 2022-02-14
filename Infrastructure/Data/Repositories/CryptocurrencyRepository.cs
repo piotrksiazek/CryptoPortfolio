@@ -11,7 +11,7 @@ namespace Infrastructure.Data.Repositories
 {
     public class CryptocurrencyRepository : RepositoryBase<Cryptocurrency>, ICryptocurrencyRepository
     {
-        public CryptocurrencyRepository(DbContext context) : base(context)
+        public CryptocurrencyRepository(AppDbContext context) : base(context)
         {
         }
     }

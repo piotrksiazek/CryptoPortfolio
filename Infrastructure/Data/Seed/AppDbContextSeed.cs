@@ -15,32 +15,30 @@ namespace Infrastructure.Data.Seed
             var logger = loggerFactory.CreateLogger<AppDbContextSeed>();
             try
             {
-                logger.LogError("InsideSeedAsync");
                 if (!context.Cryptocurrencies.Any())
                 {
-                    
-                    var bitcoin = new Cryptocurrency()
+                    List<Cryptocurrency> cryptocurrencies = new()
                     {
-                        Name = "Bitcoin",
-                        Symbol = "BTC",
-                        CoingeckoName = "bitcoin"
+                        new()
+                        {
+                            Name = "Bitcoin",
+                            Symbol = "BTC",
+                            CoingeckoName = "bitcoin"
+                        },
+                        new()
+                        {
+                            Name = "Ethereum",
+                            Symbol = "ETH",
+                            CoingeckoName = "ethereum"
+                        },
+                        new()
+                        {
+                            Name = "Tether",
+                            Symbol = "USDT",
+                            CoingeckoName = "usdt"
+                        }
                     };
-
-                    var ethereum = new Cryptocurrency()
-                    {
-                        Name = "Ethereum",
-                        Symbol = "ETH",
-                        CoingeckoName = "ethereum"
-                    };
-
-                    var usdt = new Cryptocurrency()
-                    {
-                        Name = "Tether",
-                        Symbol = "USDT",
-                        CoingeckoName = "usdt"
-                    };
-
-                    context.Cryptocurrencies.AddRange(bitcoin, ethereum, usdt);
+                    context.Cryptocurrencies.AddRange(cryptocurrencies);
                 }
 
                 await context.SaveChangesAsync();

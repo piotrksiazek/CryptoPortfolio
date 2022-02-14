@@ -11,9 +11,9 @@ namespace Infrastructure.Data.Repositories
 {
     public class RepositoryBase<T> : IRepository<T> where T : class
     {
-        protected readonly DbContext Context;
+        protected readonly AppDbContext Context;
 
-        public RepositoryBase(DbContext context)
+        public RepositoryBase(AppDbContext context)
         {
             Context = context;
         }
