@@ -13,7 +13,15 @@ namespace Infrastructure.Data
     {
         public AppDbContext(DbContextOptions options) : base(options)
         {
+
         }
+
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<WalletType> WalletTypes { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Cryptocurrency> Cryptocurrencies { get; set; }
+        public DbSet<Balance> Balances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
