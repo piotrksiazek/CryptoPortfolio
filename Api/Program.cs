@@ -1,8 +1,10 @@
 using Api.Extensions;
+using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Data.Seed;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -21,6 +23,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 
+//identity
+var identityBuilder = builder.Services.AddIdentityCore<AppUser>();
+identityBuilder = new IdentityBuilder(identityBuilder.UserType, identityBuilder.Services);
+identityBuilder.AddEntityFrameworkStores<AppDbContext>();
+identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+builder.Services.AddAuthentication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,7 +45,9 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await dbContext.Database.MigrateAsync();
-        await AppDbContextSeed.SeedAsync(dbContext, loggerFactory);
+
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        await AppDbContextSeed.SeedAsync(dbContext, loggerFactory, userManager);
     }
     catch (Exception ex)
     {
