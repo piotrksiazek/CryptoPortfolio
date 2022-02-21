@@ -23,13 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 
-//identity
-var identityBuilder = builder.Services.AddIdentityCore<AppUser>();
-identityBuilder = new IdentityBuilder(identityBuilder.UserType, identityBuilder.Services);
-identityBuilder.AddEntityFrameworkStores<AppDbContext>();
-identityBuilder.AddSignInManager<SignInManager<AppUser>>();
-builder.Services.AddAuthentication();
-
+builder.Services.AddIdentityServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -58,6 +52,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

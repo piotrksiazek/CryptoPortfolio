@@ -1,8 +1,13 @@
 ﻿using Api.Dtos;
 using Core.Entities;
+using Core.Interfaces;
+using Core.Interfaces.Services.Auth;
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -12,11 +17,47 @@ namespace Api.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly ITokenService _tokenService;
+        private readonly AppDbContext _ctx;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService,
+            AppDbContext ctx)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
+            _ctx = ctx;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>>GetCurrentUser()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return new UserDto
+            {
+                Username = user.Email,
+                Email = user.Email,
+                Token = _tokenService.GenerateToken(user)
+            };
+        }
+
+        [Authorize]
+        [HttpGet("emailexists")]
+        public async Task<ActionResult<bool>> CheckEmailExists([FromQuery] string email)
+        {
+            return await _userManager.FindByEmailAsync(email) != null;
+        }
+
+        [Authorize]
+        [HttpGet("balances")]
+        public async Task<ActionResult<ICollection<Balance>>> GetBalances()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+            return _ctx.Balances.Where(x => x.AppUserId == user.Id).ToList();
         }
 
         [HttpPost("login")]
@@ -34,7 +75,7 @@ namespace Api.Controllers
             {
                 Username = loginDto.Email,
                 Email = loginDto.Email,
-                Token = "Token"
+                Token = _tokenService.GenerateToken(user)
             };
         }
 
@@ -55,7 +96,7 @@ namespace Api.Controllers
             {
                 Username = registerDto.Email,
                 Email  =registerDto.Email,
-                Token = "Token"
+                Token = _tokenService.GenerateToken(user)
             };
         }
 
