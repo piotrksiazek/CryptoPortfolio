@@ -18,29 +18,29 @@ namespace Infrastructure.Data.Repositories
             Context = context;
         }
 
-        public T Get(int id)
+        public async Task<T> Get(int id)
         {
-            return Context.Set<T>().Find(id);
+            return await Context.Set<T>().FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            return Context.Set<T>().ToList();
+            return await Context.Set<T>().ToListAsync();
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
-            return Context.Set<T>().Where(predicate);
+            return await Context.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
-            Context.Set<T>().Add(entity);
+            await Context.Set<T>().AddAsync(entity);
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        public async Task AddRange(IEnumerable<T> entities)
         {
-            Context.Set<T>().AddRange(entities);
+            await Context.Set<T>().AddRangeAsync(entities);
         }
 
         public void Remove(T entity)

@@ -10,17 +10,19 @@ namespace Api.Controllers
     [ApiController]
     public class CryptocurrencyController : ControllerBase
     {
-        private readonly ICryptocurrencyRepository _cryptocurrencyRepository;
-        public CryptocurrencyController(ICryptocurrencyRepository cryptocurrencyRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CryptocurrencyController(IUnitOfWork unitOfWork)
         {
-            _cryptocurrencyRepository = cryptocurrencyRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/<CryptocurrencyController>
         [HttpGet]
-        public IEnumerable<Cryptocurrency> Get()
+        public async Task<ActionResult<IEnumerable<Cryptocurrency>>>Get()
         {
-            return _cryptocurrencyRepository.GetAll();
+            var result = await _unitOfWork.CryptocurrencyRepository.GetAll();
+            return Ok(result);
         }
 
         // GET api/<CryptocurrencyController>/5
