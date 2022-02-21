@@ -16,8 +16,6 @@ namespace Core.Entities
         [Required]
         public string AppUserId { get; set; }
         [Required]
-        public AppUser AppUser { get; set; }
-        [Required]
         public int CryptocurrencyId { get; set; }
         [Required]
         public Cryptocurrency Cryptocurrency { get; set; }
