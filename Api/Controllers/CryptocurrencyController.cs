@@ -17,13 +17,13 @@ namespace Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/<CryptocurrencyController>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cryptocurrency>>>Get()
-        {
-            var result = await _unitOfWork.CryptocurrencyRepository.GetAll();
-            return Ok(result);
-        }
+        //// GET: api/<CryptocurrencyController>
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Cryptocurrency>>>Get()
+        //{
+        //    var result = await _unitOfWork.CryptocurrencyRepository.GetAll();
+        //    return Ok(result);
+        //}
 
         // GET api/<CryptocurrencyController>/5
         [HttpGet("{id}")]

@@ -2,9 +2,13 @@
 using Api.Extensions;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Interfaces.Services;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -13,34 +17,46 @@ namespace Api.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBalanceService _balanceService;
+        private readonly IClaimsRetriever _claimsRetriever;
 
-        public TransactionController(IUnitOfWork unitOfWork)
+        public TransactionController(IUnitOfWork unitOfWork, IBalanceService balanceService, IClaimsRetriever claimsRetriever)
         {
             _unitOfWork = unitOfWork;
+            _balanceService = balanceService;
+            _claimsRetriever = claimsRetriever;
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<List<Transaction>>> GetPaged()
+        public async Task<ActionResult<List<Transaction>>> GetTransactions()
         {
             //add paging
-            var userId = HttpContext.GetUserId();
-            var transactions = await _unitOfWork.TransactionRepository.Find(x => x.AppUserId == userId);
+            var userId = _claimsRetriever.GetUserId(HttpContext);
+            var transactions = await _unitOfWork.TransactionRepository.GetUserTransactions(userId);
+            if(transactions == null)
+            {
+                return NotFound();
+            }
             return Ok(transactions);
         }
 
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Transaction>> GetWithId(int id)
+        public async Task<ActionResult<Transaction>> GetTransactionWithId(int id)
         {
             var userId = HttpContext.GetUserId();
-            var transactions = await _unitOfWork.TransactionRepository.Find(x => x.AppUserId == userId && x.Id == id);
-            return Ok(transactions);
+            var transaction = await _unitOfWork.TransactionRepository.GetForUser(userId, id);
+            if(transaction == null)
+            {
+                return NotFound();
+            }
+            return Ok(transaction);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<bool>> Add([FromBody] TransactionDto transactionDto)
+        public async Task<ActionResult<bool>> AddTransaction([FromBody] TransactionDto transactionDto)
         {
             var userId = HttpContext.GetUserId();
             var transactionToAdd = new Transaction()
@@ -52,51 +68,53 @@ namespace Api.Controllers
             };
 
             await _unitOfWork.TransactionRepository.Add(transactionToAdd);
-            var numberOfChanges = _unitOfWork.Save();
+            var numberOfChanges = await _unitOfWork.SaveAsync();
             if (numberOfChanges > 0)
             {
+                await _balanceService.HandleRebalance(transactionToAdd, userId);
                 return Ok(true);
             }
             return BadRequest(false);
         }
 
         [Authorize]
-        [HttpPut]
-        public async Task<ActionResult<bool>> Update(TransactionWIthIDDto transactionDto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateTransaction(int id, [FromBody] TransactionDto transactionDto)
         {
             var userId = HttpContext.GetUserId();
-            var transaction = await _unitOfWork.TransactionRepository.Get(transactionDto.Id);
-            if (transaction == null || transaction.AppUserId != userId)
-                return BadRequest(false);
+            var transaction = await _unitOfWork.TransactionRepository.Get(id);
+            if (transaction == null)
+                return NotFound();
+
+            if(transaction.AppUserId != userId)
+                return Unauthorized();
 
             transaction.Amount = transactionDto.Amount;
             transaction.UnitPrice = transactionDto.UnitPrice;
             transaction.CryptocurrencyId = transactionDto.CryptocurrencyId;
 
-            _unitOfWork.Save();
-            if(transaction.Amount > 0)
-                return Ok(true);
-            return BadRequest(false);
+            var numberOfChanges = await _unitOfWork.SaveAsync();
+            return Ok(numberOfChanges);
         }
 
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteTransaction(int id)
         {
             var userId = HttpContext.GetUserId();
-            var transaction = await _unitOfWork.TransactionRepository.Get(id);
-            if(transaction.AppUserId == userId)
+            var transaction = await _unitOfWork.TransactionRepository.GetForUser(userId, id);
+            if (transaction != null)
             {
                 _unitOfWork.TransactionRepository.Remove(transaction);
+                transaction.Amount = -transaction.Amount;
+                await _balanceService.HandleRebalance(transaction, userId);
             }
             else
             {
-                return BadRequest("This transaction doesn't belong to you");
+                return NotFound();
             }
-            var amountOfChanges = _unitOfWork.Save();
-            if (amountOfChanges > 0)
-                return Ok();
-            return BadRequest();
+            await _unitOfWork.SaveAsync();
+            return Ok();
         }
     }
 }

@@ -16,5 +16,16 @@ namespace Infrastructure.Data.Repositories
         {
             _context = context;
         }
+
+        public bool HasUserCryptocurrencyWithId(int cryptoId, string appUserId)
+        {
+            bool hasCryptocurrency = _context.Transactions.Any(x => x.CryptocurrencyId == cryptoId && x.AppUserId == appUserId);
+            return hasCryptocurrency;
+        }
+
+        public async Task<IEnumerable<Transaction>> GetUserTransactions(string appUserId)
+        {
+            return await Find(x => x.AppUserId == appUserId);
+        }
     }
 }

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Interfaces
+namespace Core.Interfaces.Services
 {
-    public interface ICryptocurrencyRepository : IRepository<Cryptocurrency>
+    public interface IBalanceService
     {
-
+        public Task HandleRebalance(Transaction transactionDto, string appUserId);
     }
 }

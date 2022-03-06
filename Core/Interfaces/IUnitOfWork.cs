@@ -8,8 +8,9 @@ namespace Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        ICryptocurrencyRepository CryptocurrencyRepository { get; }
         ITransactionRepository TransactionRepository { get; }
-        int Save();
+        IBalanceRepository BalanceRepository { get; }
+        IWalletRepository WalletRepository { get; }
+        Task<int> SaveAsync();
     }
 }

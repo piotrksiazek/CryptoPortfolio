@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface ITransactionRepository : IRepository<Transaction>, IHaveThisCrypto
+    public interface IWalletRepository : IRepository<Wallet>, IHaveThisCrypto
     {
-        Task<IEnumerable<Transaction>> GetUserTransactions(string appUserId);
     }
 }
