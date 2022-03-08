@@ -45,7 +45,7 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Transaction>> GetTransactionWithId(int id)
         {
-            var userId = HttpContext.GetUserId();
+            var userId = _claimsRetriever.GetUserId(HttpContext);
             var transaction = await _unitOfWork.TransactionRepository.GetForUser(userId, id);
             if(transaction == null)
             {

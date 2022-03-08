@@ -18,11 +18,19 @@ namespace Infrastructure.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task HandleRebalance(Transaction transaction, string appUserId)
+        /// <summary>
+        /// Decides if new balance should be added or only updated if crypto with given id already exists
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="appUserId"></param>
+        /// <returns>true if added new balance, false if just updated</returns>
+        public async Task<bool> HandleRebalance(Transaction transaction, string appUserId)
         {
             var cryptoId = transaction.CryptocurrencyId;
             bool hasTransactionWithCrypto = _unitOfWork.TransactionRepository.HasUserCryptocurrencyWithId(cryptoId, appUserId);
             bool hasWalletWithCrypto = _unitOfWork.WalletRepository.HasUserCryptocurrencyWithId(cryptoId, appUserId);
+
+            bool addedNewBalance = false;
 
             var balanceToAdd = new Balance()
             {
@@ -35,6 +43,7 @@ namespace Infrastructure.Services
             {
     
                 await _unitOfWork.BalanceRepository.Add(balanceToAdd);
+                addedNewBalance = true;
             }
             else
             {
@@ -42,6 +51,7 @@ namespace Infrastructure.Services
                 if(currentBalance == null)
                 {
                     await _unitOfWork.BalanceRepository.Add(balanceToAdd);
+                    addedNewBalance = true;
                 }
                 else
                 {
@@ -49,6 +59,7 @@ namespace Infrastructure.Services
                 }
             }
             await _unitOfWork.SaveAsync();
+            return addedNewBalance;
         }
     }
 }

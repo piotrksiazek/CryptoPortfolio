@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces;
 using Core.Interfaces.Services;
 using Core.Interfaces.Services.Auth;
+using Infrastructure;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Services;
 
@@ -17,7 +18,7 @@ namespace Api.Extensions
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<IBalanceService, BalanceService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IClaimsRetriever, IClaimsRetriever>();
+            services.AddScoped<IClaimsRetriever, ClaimsRetriever>();
             return services;
         }
     }
