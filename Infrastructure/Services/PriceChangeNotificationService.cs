@@ -10,6 +10,13 @@ namespace Infrastructure.Services
 {
     public class PriceChangeNotificationService : IPriceChangeNotificationService
     {
+        private readonly IMailingService _mailingService;
+
+        public PriceChangeNotificationService(IMailingService mailingService)
+        {
+            _mailingService = mailingService;
+        }
+
         public bool IsNotifiable(Notification notification, decimal price)
         {
             var greaterThanOrEqual = notification.GreaterThanOrEqual;
