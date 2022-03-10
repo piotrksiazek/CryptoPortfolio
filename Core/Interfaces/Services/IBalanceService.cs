@@ -9,6 +9,6 @@ namespace Core.Interfaces.Services
 {
     public interface IBalanceService
     {
-        public Task HandleRebalance(Transaction transactionDto, string appUserId);
+        public Task<bool> HandleRebalance(Transaction transactionDto, string appUserId);
     }
 }
