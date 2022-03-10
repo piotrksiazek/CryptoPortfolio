@@ -27,9 +27,14 @@ namespace Api.Controllers
 
         // GET api/<CryptocurrencyController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<string>> Get(int id)
         {
-            return "value";
+            var result = await _unitOfWork.CryptoCurrencyRepository.Get(id);
+            if(result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         // POST api/<CryptocurrencyController>
