@@ -11,6 +11,7 @@ namespace Core.Interfaces
         ITransactionRepository TransactionRepository { get; }
         IBalanceRepository BalanceRepository { get; }
         IWalletRepository WalletRepository { get; }
+        ICryptoCurrencyRepository CryptoCurrencyRepository { get; }
         Task<int> SaveAsync();
     }
 }

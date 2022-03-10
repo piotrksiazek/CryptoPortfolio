@@ -16,6 +16,7 @@ namespace Api.Extensions
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IBalanceRepository, BalanceRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<ICryptoCurrencyRepository, CryptoCurrencyRepository>();
             services.AddScoped<IBalanceService, BalanceService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClaimsRetriever, ClaimsRetriever>();

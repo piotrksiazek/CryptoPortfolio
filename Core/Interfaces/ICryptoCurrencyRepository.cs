@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    //public interface ICryptoCurrencyRepository : IRepository<Cryptocurrency>
-    //{
+    public interface ICryptoCurrencyRepository : IRepository<Cryptocurrency>
+    {
 
-    //}
+    }
 }
