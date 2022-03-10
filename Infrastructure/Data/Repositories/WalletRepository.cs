@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class WalletRepository : RepositoryBase<Wallet>, IWalletRepository
+    public class WalletRepository : UserOwnedRepository<Wallet>, IWalletRepository
     {
         private readonly AppDbContext _context;
 

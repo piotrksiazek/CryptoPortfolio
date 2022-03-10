@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class TransactionRepository : RepositoryBase<Transaction>, ITransactionRepository
+    public class TransactionRepository : UserOwnedRepository<Transaction>, ITransactionRepository
     {
         private readonly AppDbContext _context;
 

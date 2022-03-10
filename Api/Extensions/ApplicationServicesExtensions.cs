@@ -12,7 +12,7 @@ namespace Api.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
+            services.AddScoped(typeof(IUserOwnedRepository<>), typeof(RepositoryBase<>));
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IBalanceRepository, BalanceRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();

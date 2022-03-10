@@ -8,7 +8,7 @@ using System.Transactions;
 
 namespace Core.Interfaces
 {
-    public interface IBalanceRepository : IRepository<Balance>
+    public interface IBalanceRepository : IUserOwnedRepository<Balance>
     {
         Task<Balance> GetForUserWithCryptoId(string appUserId, int cryptoId);
     }

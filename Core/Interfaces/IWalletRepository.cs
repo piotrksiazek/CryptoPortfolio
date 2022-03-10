@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IWalletRepository : IRepository<Wallet>, IHaveThisCrypto
+    public interface IWalletRepository : IUserOwnedRepository<Wallet>, IHaveThisCrypto
     {
     }
 }

@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class RepositoryBase<T> : IRepository<T> where T : IOwnedByUser
+    //public class RepositoryBase<T> : IUserOwnedRepository<T> where T : IOwnedByUser
+    public class RepositoryBase<T> : IRepository<T> where T : class
+
     {
         protected readonly AppDbContext Context;
 
@@ -23,20 +25,20 @@ namespace Infrastructure.Data.Repositories
             return await Context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T?> GetForUser(string appUserId, int id)
-        {
-            return await Context.Set<T>().Where(x => x.AppUserId == appUserId && x.Id == id).FirstOrDefaultAsync();
-        }
+        //public async Task<T?> GetForUser(string appUserId, int id)
+        //{
+        //    return await Context.Set<T>().Where(x => x.AppUserId == appUserId && x.Id == id).FirstOrDefaultAsync();
+        //}
 
         public async Task<IEnumerable<T>> GetAll()
         {
             return await Context.Set<T>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllForUser(string appUserId)
-        {
-            return await Context.Set<T>().Where(x => x.AppUserId == appUserId).ToListAsync();
-        }
+        //public async Task<IEnumerable<T>> GetAllForUser(string appUserId)
+        //{
+        //    return await Context.Set<T>().Where(x => x.AppUserId == appUserId).ToListAsync();
+        //}
 
         public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {

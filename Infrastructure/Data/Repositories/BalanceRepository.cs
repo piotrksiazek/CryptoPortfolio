@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class BalanceRepository : RepositoryBase<Balance>, IBalanceRepository
+    public class BalanceRepository : UserOwnedRepository<Balance>, IBalanceRepository
     {
         private readonly AppDbContext _context;
         public BalanceRepository(AppDbContext context) : base(context)
