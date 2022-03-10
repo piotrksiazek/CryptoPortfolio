@@ -26,19 +26,16 @@ namespace Infrastructure.Data.Seed
                         {
                             Name = "Bitcoin",
                             Symbol = "BTC",
-                            CoingeckoName = "bitcoin"
                         },
                         new()
                         {
                             Name = "Ethereum",
                             Symbol = "ETH",
-                            CoingeckoName = "ethereum"
                         },
                         new()
                         {
                             Name = "Tether",
                             Symbol = "USDT",
-                            CoingeckoName = "usdt"
                         }
                     };
                     context.Cryptocurrencies.AddRange(cryptocurrencies);
