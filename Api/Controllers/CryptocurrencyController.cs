@@ -12,10 +12,20 @@ namespace Api.Controllers
     public class CryptocurrencyController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICryptoApiCallerService _cacs;
 
-        public CryptocurrencyController(IUnitOfWork unitOfWork)
+        public CryptocurrencyController(IUnitOfWork unitOfWork, ICryptoApiCallerService cacs)
         {
             _unitOfWork = unitOfWork;
+            _cacs = cacs;
+        }
+
+        //delete this
+        [HttpGet("data/{name}")]
+        public async Task<ActionResult<CryptocurrencyData>>GetData(string name)
+        {
+            var result = await _cacs.GetCryptoData(name);
+            return Ok(result);
         }
 
         // GET: api/<CryptocurrencyController>
