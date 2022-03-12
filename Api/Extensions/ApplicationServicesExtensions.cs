@@ -20,6 +20,7 @@ namespace Api.Extensions
             services.AddScoped<IBalanceService, BalanceService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClaimsRetriever, ClaimsRetriever>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddSingleton<IMailingService, MailingService>();
             services.AddSingleton<IExternalApiClientService, ExternalApiClientService>();
             services.AddScoped<ICryptoApiCallerService, CryptoApiCallerService>();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Core.Interfaces.Services
 {
     public interface IMailingService
     {
-        void SendEmail(string title, string body, string reciever);
+        void SendEmail(NotificationEmail email);
     }
 }

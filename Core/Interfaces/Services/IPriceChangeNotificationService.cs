@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Core.Interfaces.Services
 {
     public interface IPriceChangeNotificationService
     {
-        bool IsNotifiable(Notification notification, decimal price);
+        NotificationType GetNotificationType(Notification notification, decimal price);
     }
 }
