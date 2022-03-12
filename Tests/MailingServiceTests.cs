@@ -11,11 +11,13 @@ namespace Tests
 {
     public class MailingServiceTests
     {
-        [Fact]
-        public void Constructor_PasswordEnviromentVariableShouldExist()
+        [Theory]
+        [InlineData("CryptoPortfolioEmailPassword")]
+        [InlineData("CryptoPortfolioEmailUsername")]
+        public void Constructor_PasswordEnviromentVariableShouldExist(string enviromentVariableName)
         {
-            var password = Environment.GetEnvironmentVariable("CryptoPortfolioEmailPassword");
-            Assert.NotNull(password);
+            var actual = Environment.GetEnvironmentVariable(enviromentVariableName);
+            Assert.NotNull(actual);
         }
     }
 }
