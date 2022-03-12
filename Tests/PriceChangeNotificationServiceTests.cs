@@ -8,19 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Core.Enums;
 
 namespace Tests
 {
     public class PriceChangeNotificationServiceTests
     {
         [Theory]
-        [InlineData(true, 420, 500, true)]
-        [InlineData(true, 420, 300, false)]
-        [InlineData(false, 420, 300, true)]
-        [InlineData(false, 420, 500, false)]
-        [InlineData(true, 420, 420, true)]
-        [InlineData(false, 420, 420, true)]
-        public void IsNotifiable_Test(bool greaterThanOrEqual, decimal pricePoint, decimal actualPrice, bool expected)
+        [InlineData(true, 420, 500, NotificationType.Above)]
+        [InlineData(true, 420, 300, NotificationType.None)]
+        [InlineData(false, 420, 300, NotificationType.Below)]
+        [InlineData(false, 420, 500, NotificationType.None)]
+        [InlineData(true, 420, 420, NotificationType.Above)]
+        [InlineData(false, 420, 420, NotificationType.Below)]
+        public void IsNotifiable_Test(bool greaterThanOrEqual, decimal pricePoint, decimal actualPrice, NotificationType expected)
         {
             //arrange
             var mailingServiceMock = new Mock<IMailingService>();
@@ -32,7 +33,7 @@ namespace Tests
             };
 
             //act
-            bool result = service.IsNotifiable(notification, actualPrice);
+            NotificationType result = service.GetNotificationType(notification, actualPrice);
 
             //assert
             Assert.Equal(expected, result);

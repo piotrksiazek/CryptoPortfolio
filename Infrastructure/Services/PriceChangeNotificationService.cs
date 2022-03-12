@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Enums;
 using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Infrastructure.Services
             _mailingService = mailingService;
         }
 
-        public bool IsNotifiable(Notification notification, decimal price)
+        public NotificationType GetNotificationType(Notification notification, decimal price)
         {
             var greaterThanOrEqual = notification.GreaterThanOrEqual;
             var pricePoint = notification.PricePoint;
@@ -26,17 +27,17 @@ namespace Infrastructure.Services
             {
                 if(price >= pricePoint)
                 {
-                    return true;
+                    return NotificationType.Above;
                 }
             }
             else
             {
                 if(price <= pricePoint)
                 {
-                    return true;
+                    return NotificationType.Below;
                 }
             }
-            return false;
+            return NotificationType.None;
         }
     }
 }
