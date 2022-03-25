@@ -1,5 +1,8 @@
 ﻿using Core.Entities;
+using Core.Interfaces;
 using Core.Interfaces.Services;
+using Infrastructure.Data;
+using Infrastructure.Data.Repositories;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -15,13 +18,12 @@ namespace Tests
 {
     public class MailingServiceTests
     {
-        //private readonly IServiceProvider _provider;
+        private readonly IUnitOfWork _uow;
 
-        //public MailingServiceTests(IServiceProvider provider)
-        //{
-        //    _provider = provider;
-        //}
-
+        public MailingServiceTests(IUnitOfWork uow)
+        {
+            _uow = uow;
+        }
         [Theory]
         [InlineData("CryptoPortfolioEmailPassword")]
         [InlineData("CryptoPortfolioEmailUsername")]
@@ -46,8 +48,10 @@ namespace Tests
             email.Sender = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
             email.Reciever = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
 
+            var notification = new Notification();
+
             //act
-            mailingService.SendEmailAsync(email);
+            mailingService.SendEmailAsync(email, notification, _uow);
             Thread.Sleep(3000); //should be enough for email to be sent.
 
             Assert.True(didSend);

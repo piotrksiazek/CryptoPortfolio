@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace Infrastructure.Services
         /// <param name="handleSuccesfulEmailMethod"></param>
         /// <param name="handleFailedEmailMethod"></param>
         /// <exception cref="Exception"></exception>
-        public MailingService(Action handleSuccesfulEmailMethod = null, Action handleFailedEmailMethod = null)
+        public MailingService()
         {
             _password = Environment.GetEnvironmentVariable("CryptoPortfolioEmailPassword");
             _username = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
@@ -48,19 +49,21 @@ namespace Infrastructure.Services
             _client.DeliveryMethod = SmtpDeliveryMethod.Network;
             _client.UseDefaultCredentials = false;
             _client.Credentials = new NetworkCredential(_username, _password);
+        }
 
-            if(handleFailedEmailMethod is null)
+        public void SendEmailAsync(NotificationEmail email, Notification notification, IUnitOfWork uow,
+            Action handleSuccesfulEmailMethod = null, Action handleFailedEmailMethod = null)
+        {
+            if (handleFailedEmailMethod is null)
             {
                 HandleFailedEmailDelegate = HandleFailedEmail;
             }
             if (handleSuccesfulEmailMethod is null)
             {
-                HandleSuccessfulEmailDelegate = HandleSuccessfulEmail;
+                HandleSuccessfulEmailDelegate = () => HandleSuccessfulEmail(notification, uow);
             }
-        }
 
-        public void SendEmailAsync(NotificationEmail email)
-        {
+
             if (email.Sender == null)
                 throw new ArgumentNullException(nameof(email.Sender));
 
@@ -80,10 +83,10 @@ namespace Infrastructure.Services
 
             string emailSender = email.From.ToString();
 
-            if (e.Cancelled)
-            {
-                //Console.WriteLine("[{0}] Send canceled.", token);
-            }
+            //if (e.Cancelled)
+            //{
+            //    //Console.WriteLine("[{0}] Send canceled.", token);
+            //}
             if (e.Error != null)
             {
                 HandleFailedEmailDelegate.Invoke();
@@ -97,14 +100,19 @@ namespace Infrastructure.Services
         }
 
 
-        public void HandleSuccessfulEmail()
+        /// <summary>
+        /// Deletes notification from db after requirements are met.
+        /// </summary>
+        public void HandleSuccessfulEmail(Notification notification, IUnitOfWork uow)
         {
-
+            uow.NotificationRepository.Remove(notification);
         }
 
+        /// <summary>
+        /// Method only for testing purpouse. Failed emails wait for another round of notification checking.
+        /// </summary>
         public void HandleFailedEmail()
         {
-
         }
     }
 }

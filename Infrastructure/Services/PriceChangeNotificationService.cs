@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Enums;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,33 @@ namespace Infrastructure.Services
                 }
             }
             return NotificationType.None;
+        }
+
+        public void Notify(Notification notification, decimal price, IUnitOfWork uow)
+        {
+            var notificationEmail = GetMessage(notification, price);
+            _mailingService.SendEmailAsync(notificationEmail, notification, uow);
+        }
+
+        public async Task NotifyAll()
+        {
+
+        }
+
+        private NotificationEmail GetMessage(Notification notification, decimal price)
+        {
+            var email = new NotificationEmail();
+
+            string aboveOrBelow = notification.GreaterThanOrEqual ? "above" : "below";
+            var body = $"{notification.Cryptocurrency.Name} is now {aboveOrBelow} {notification.PricePoint} at current price {price}!";
+            var title = $"{notification.Cryptocurrency.Name} notification.";
+
+            email.Title = title;
+            email.Body = body;
+            email.Sender = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
+            email.Reciever = notification.AppUser.Email;
+
+            return email;
         }
     }
 }

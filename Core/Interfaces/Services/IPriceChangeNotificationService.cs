@@ -11,5 +11,6 @@ namespace Core.Interfaces.Services
     public interface IPriceChangeNotificationService
     {
         NotificationType GetNotificationType(Notification notification, decimal price);
+        void Notify(Notification notification, decimal price, IUnitOfWork uow);
     }
 }
