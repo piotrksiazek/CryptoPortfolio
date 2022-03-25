@@ -12,10 +12,12 @@ namespace Infrastructure.Services
     public class PriceChangeNotificationService : IPriceChangeNotificationService
     {
         private readonly IMailingService _mailingService;
+        private readonly ICryptoApiCallerService _cryptoApiCallerService;
 
-        public PriceChangeNotificationService(IMailingService mailingService)
+        public PriceChangeNotificationService(IMailingService mailingService, ICryptoApiCallerService cryptoApiCallerService)
         {
             _mailingService = mailingService;
+            _cryptoApiCallerService = cryptoApiCallerService;
         }
 
         public NotificationType GetNotificationType(Notification notification, decimal price)

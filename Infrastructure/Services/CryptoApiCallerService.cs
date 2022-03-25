@@ -19,7 +19,7 @@ namespace Infrastructure.Services
             _httpClient = httpClient;
         }
 
-        public async Task<CryptocurrencyData> GetCryptoData(string name)
+        public async Task<CryptocurrencyData?> GetCryptoData(string name)
         {
             string url = _coinGeckoBaseUri + "coins" + "/" + name;
 
@@ -30,13 +30,23 @@ namespace Infrastructure.Services
                     string json = await response.Content.ReadAsStringAsync();
                     if(json != null)
                     {
-                        CryptocurrencyData crypto = JsonSerializer.Deserialize<CryptocurrencyData>(json);
+                        CryptocurrencyData? crypto = JsonSerializer.Deserialize<CryptocurrencyData>(json);
                         return crypto;
                     }
 
                 }
                 return null;
             }
+        }
+
+        public async Task<double?> GetCryptoPrice(string name)
+        {
+            var result = await GetCryptoData(name);
+            if(result != null)
+            {
+                return result.market_data.current_price.usd;
+            }
+            return null;
         }
     }
 }

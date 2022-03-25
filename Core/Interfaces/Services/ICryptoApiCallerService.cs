@@ -9,6 +9,7 @@ namespace Core.Interfaces.Services
 {
     public interface ICryptoApiCallerService
     {
-        public Task<CryptocurrencyData?> GetCryptoData(string name);
+        Task<CryptocurrencyData?> GetCryptoData(string name);
+        Task<double?> GetCryptoPrice(string name)
     }
 }
