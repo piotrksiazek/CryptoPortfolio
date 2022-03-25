@@ -9,6 +9,8 @@ namespace Core.Interfaces.Services
 {
     public interface IMailingService
     {
-        void SendEmail(NotificationEmail email);
+        void SendEmailAsync(NotificationEmail email);
+        void HandleSuccessfulEmail();
+        void HandleFailedEmail();
     }
 }

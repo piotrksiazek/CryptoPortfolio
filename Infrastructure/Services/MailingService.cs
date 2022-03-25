@@ -1,8 +1,10 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -16,11 +18,9 @@ namespace Infrastructure.Services
         private readonly string? _username;
         private string? _password;
         private readonly SmtpClient _client;
-        private readonly IConfiguration _config;
 
-        public MailingService(IConfiguration config)
+        public MailingService()
         {
-            _config = config;
             _password = Environment.GetEnvironmentVariable("CryptoPortfolioEmailPassword");
             _username = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
             if(_password == null)
@@ -41,7 +41,7 @@ namespace Infrastructure.Services
             _client.Credentials = new NetworkCredential(_username, _password);
         }
 
-        public void SendEmail(NotificationEmail email)
+        public void SendEmailAsync(NotificationEmail email)
         {
             if (email.Sender == null)
                 throw new ArgumentNullException(nameof(email.Sender));
@@ -51,8 +51,42 @@ namespace Infrastructure.Services
             message.From = new MailAddress(email.Sender);
             message.Subject = email.Title;
             message.Body = email.Body;
-            _client.Send(message);
+            _client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
+            _client.SendAsync(message, message);
                 
+        }
+
+        private void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            MailMessage email = (MailMessage)e.UserState;
+
+            string emailSender = email.From.ToString();
+
+            if (e.Cancelled)
+            {
+                //Console.WriteLine("[{0}] Send canceled.", token);
+            }
+            if (e.Error != null)
+            {
+                HandleFailedEmail();
+                Console.WriteLine("error email");
+            }
+            else
+            {
+                HandleSuccessfulEmail();
+                Console.WriteLine("success email");
+            }
+        }
+
+
+        public void HandleSuccessfulEmail()
+        {
+
+        }
+
+        public void HandleFailedEmail()
+        {
+
         }
     }
 }

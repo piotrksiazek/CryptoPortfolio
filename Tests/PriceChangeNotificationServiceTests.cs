@@ -25,7 +25,8 @@ namespace Tests
         {
             //arrange
             var mailingServiceMock = new Mock<IMailingService>();
-            var service = new PriceChangeNotificationService(mailingServiceMock.Object);
+            var cryptoApiCallerService = new Mock<ICryptoApiCallerService>();
+            var service = new PriceChangeNotificationService(mailingServiceMock.Object, cryptoApiCallerService.Object);
             var notification = new Notification()
             {
                 GreaterThanOrEqual = greaterThanOrEqual,
