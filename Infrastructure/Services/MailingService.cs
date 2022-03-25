@@ -15,11 +15,20 @@ namespace Infrastructure.Services
 {
     public class MailingService : IMailingService
     {
+        public Action HandleSuccessfulEmailDelegate { get; set; }
+        public Action HandleFailedEmailDelegate { get; set; }
+
         private readonly string? _username;
         private string? _password;
         private readonly SmtpClient _client;
 
-        public MailingService()
+        /// <summary>
+        /// Ctor parameters for testing purpouse. In application should remain null.
+        /// </summary>
+        /// <param name="handleSuccesfulEmailMethod"></param>
+        /// <param name="handleFailedEmailMethod"></param>
+        /// <exception cref="Exception"></exception>
+        public MailingService(Action handleSuccesfulEmailMethod = null, Action handleFailedEmailMethod = null)
         {
             _password = Environment.GetEnvironmentVariable("CryptoPortfolioEmailPassword");
             _username = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
@@ -39,6 +48,15 @@ namespace Infrastructure.Services
             _client.DeliveryMethod = SmtpDeliveryMethod.Network;
             _client.UseDefaultCredentials = false;
             _client.Credentials = new NetworkCredential(_username, _password);
+
+            if(handleFailedEmailMethod is null)
+            {
+                HandleFailedEmailDelegate = HandleFailedEmail;
+            }
+            if (handleSuccesfulEmailMethod is null)
+            {
+                HandleSuccessfulEmailDelegate = HandleSuccessfulEmail;
+            }
         }
 
         public void SendEmailAsync(NotificationEmail email)
@@ -68,12 +86,12 @@ namespace Infrastructure.Services
             }
             if (e.Error != null)
             {
-                HandleFailedEmail();
+                HandleFailedEmailDelegate.Invoke();
                 Console.WriteLine("error email");
             }
             else
             {
-                HandleSuccessfulEmail();
+                HandleSuccessfulEmailDelegate.Invoke();
                 Console.WriteLine("success email");
             }
         }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,12 +15,12 @@ namespace Tests
 {
     public class MailingServiceTests
     {
-        private readonly IServiceProvider _provider;
+        //private readonly IServiceProvider _provider;
 
-        public MailingServiceTests(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
+        //public MailingServiceTests(IServiceProvider provider)
+        //{
+        //    _provider = provider;
+        //}
 
         [Theory]
         [InlineData("CryptoPortfolioEmailPassword")]
@@ -33,8 +34,11 @@ namespace Tests
         [Fact]
         public void SendEmailAsync_ShouldSucceed()
         {
-            ////arrange
-            //var mailingService = _provider.GetRequiredService<IMailingService>();
+            //arrange
+            var mailingService = new MailingService();
+            bool didSend = false;
+            mailingService.HandleSuccessfulEmailDelegate = () => SuccesfulEmailReplacment(ref didSend);
+            mailingService.HandleFailedEmailDelegate = () => FailedEmailReplacment(ref didSend);
 
             var email = new NotificationEmail();
             email.Title = "title";
@@ -42,17 +46,22 @@ namespace Tests
             email.Sender = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
             email.Reciever = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
 
-            ////act
+            //act
+            mailingService.SendEmailAsync(email);
+            Thread.Sleep(3000); //should be enough for email to be sent.
 
-            //Action action = () => mailingService.SendEmailAsync(email);
+            Assert.True(didSend);
 
-            //assert
+        }
 
-            var mailingServiceMock = new Mock<IMailingService>();
-            mailingServiceMock.Setup(x => x.SendEmailAsync(email));
+        private void SuccesfulEmailReplacment(ref bool didSend)
+        {
+            didSend = true;
+        }
 
-            mailingServiceMock.Verify(x => x.HandleSuccessfulEmail());
-
+        private void FailedEmailReplacment(ref bool didSend)
+        {
+            didSend = false;
         }
     }
 }
