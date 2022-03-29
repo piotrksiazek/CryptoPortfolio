@@ -24,6 +24,7 @@ namespace Api.Extensions
             services.AddScoped<IMailingService, MailingService>();
             services.AddSingleton<IExternalApiClientService, ExternalApiClientService>();
             services.AddScoped<ICryptoApiCallerService, CryptoApiCallerService>();
+
             return services;
         }
     }

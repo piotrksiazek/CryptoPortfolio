@@ -39,14 +39,12 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<double?> GetCryptoPrice(string name)
+        public async Task<double> GetCryptoPrice(string name)
         {
             var result = await GetCryptoData(name);
-            if(result != null)
-            {
-                return result.market_data.current_price.usd;
-            }
-            return null;
+
+            return result.market_data.current_price.usd;
+
         }
     }
 }

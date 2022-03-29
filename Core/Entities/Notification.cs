@@ -12,7 +12,7 @@ namespace Core.Entities
     {
         [Required]
         public int Id { get; set; }
-        public decimal PricePoint { get; set; }
+        public double PricePoint { get; set; }
         public bool GreaterThanOrEqual { get; set; }
         [Required]
         public bool IsRecurring { get; set; }

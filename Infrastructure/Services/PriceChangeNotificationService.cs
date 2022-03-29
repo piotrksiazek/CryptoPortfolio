@@ -21,10 +21,10 @@ namespace Infrastructure.Services
             _cryptoApiCallerService = cryptoApiCallerService;
         }
 
-        public NotificationType GetNotificationType(Notification notification, decimal price)
+        public NotificationType GetNotificationType(Notification notification, double price)
         {
             var greaterThanOrEqual = notification.GreaterThanOrEqual;
-            var pricePoint = notification.PricePoint;
+            var pricePoint = (double)notification.PricePoint;
 
             if(greaterThanOrEqual)
             {
@@ -43,29 +43,48 @@ namespace Infrastructure.Services
             return NotificationType.None;
         }
 
-        public void Notify(Notification notification, decimal price, IUnitOfWork uow)
+        public void Notify(Notification notification, double price, IUnitOfWork uow, NotificationType notificationType)
         {
-            var notificationEmail = GetMessage(notification, price);
+            var notificationEmail = GetMessage(notification, price, notificationType);
             _mailingService.SendEmailAsync(notificationEmail, notification, uow);
         }
 
-        public async Task NotifyAll()
+        public async Task NotifyAll(IUnitOfWork uow)
         {
+            var notifications = await uow.NotificationRepository.GetAll();
+            var cryptoNames = await uow.NotificationRepository.GetDistinctCryptocurrencyNames();
+;
 
+            Dictionary<string, double> cryptoPrices = new();
+
+            foreach(var cryptoName in cryptoNames)
+            {
+                cryptoPrices[cryptoName] = await _cryptoApiCallerService.GetCryptoPrice(cryptoName);
+            }
+
+
+            foreach (var notification in notifications)
+            {
+                var price = cryptoPrices[notification.Cryptocurrency.Name];
+                var notificationType = GetNotificationType(notification, price);
+                if (notificationType == NotificationType.None) continue;
+
+                Notify(notification, price, uow, notificationType);
+            }
         }
 
-        private NotificationEmail GetMessage(Notification notification, decimal price)
+        private NotificationEmail GetMessage(Notification notification, double price, NotificationType notificationType)
         {
             var email = new NotificationEmail();
 
-            string aboveOrBelow = notification.GreaterThanOrEqual ? "above" : "below";
-            var body = $"{notification.Cryptocurrency.Name} is now {aboveOrBelow} {notification.PricePoint} at current price {price}!";
+            var body = $"{notification.Cryptocurrency.Name} is now {Enum.GetName(notificationType)} {notification.PricePoint} at current price {price}!";
             var title = $"{notification.Cryptocurrency.Name} notification.";
 
             email.Title = title;
             email.Body = body;
             email.Sender = Environment.GetEnvironmentVariable("CryptoPortfolioEmailUsername");
-            email.Reciever = notification.AppUser.Email;
+            if(notification.AppUser != null)
+                email.Reciever = notification.AppUser.Email;
 
             return email;
         }

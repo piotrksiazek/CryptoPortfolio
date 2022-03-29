@@ -10,7 +10,8 @@ namespace Core.Interfaces.Services
 {
     public interface IPriceChangeNotificationService
     {
-        NotificationType GetNotificationType(Notification notification, decimal price);
-        void Notify(Notification notification, decimal price, IUnitOfWork uow);
+        NotificationType GetNotificationType(Notification notification, double price);
+        void Notify(Notification notification, double price, IUnitOfWork uow, NotificationType notificationType);
+        Task NotifyAll(IUnitOfWork uow);
     }
 }
