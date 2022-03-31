@@ -30,7 +30,7 @@ namespace Infrastructure.Data.Repositories
         //    return await Context.Set<T>().Where(x => x.AppUserId == appUserId && x.Id == id).FirstOrDefaultAsync();
         //}
 
-        public async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
             return await Context.Set<T>().ToListAsync();
         }

@@ -4,6 +4,7 @@ using Core.Interfaces.Services.Auth;
 using Infrastructure;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Services;
+using Infrastructure.Services.BackgroundServices;
 
 namespace Api.Extensions
 {
@@ -21,9 +22,12 @@ namespace Api.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IClaimsRetriever, ClaimsRetriever>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
-            services.AddScoped<IMailingService, MailingService>();
+            services.AddSingleton<IMailingService, MailingService>();
             services.AddSingleton<IExternalApiClientService, ExternalApiClientService>();
-            services.AddScoped<ICryptoApiCallerService, CryptoApiCallerService>();
+            services.AddSingleton<ICryptoApiCallerService, CryptoApiCallerService>();
+            services.AddSingleton<IPriceChangeNotificationService, PriceChangeNotificationService>();
+
+            services.AddHostedService<PriceChangeNotificationServiceRunner>();
 
             return services;
         }

@@ -22,5 +22,14 @@ namespace Infrastructure.Data.Repositories
         {
             return await _context.Notifications.Select(x => x.Cryptocurrency.Name).Distinct().ToListAsync();
         }
+
+        public override async Task<IEnumerable<Notification>> GetAll()
+        {
+            var query = _context.Notifications
+                .Include(a => a.AppUser)
+                .Include(c => c.Cryptocurrency);
+
+            return await query.ToListAsync();
+        }
     }
 }
