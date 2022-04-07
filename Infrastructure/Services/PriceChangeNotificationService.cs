@@ -53,7 +53,6 @@ namespace Infrastructure.Services
         {
             var notifications = await uow.NotificationRepository.GetAll();
             var cryptoNames = await uow.NotificationRepository.GetDistinctCryptocurrencyNames();
-;
 
             Dictionary<string, double> cryptoPrices = new();
 

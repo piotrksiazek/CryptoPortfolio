@@ -20,14 +20,6 @@ namespace Api.Controllers
             _cacs = cacs;
         }
 
-        //delete this
-        [HttpGet("data/{name}")]
-        public async Task<ActionResult<CryptocurrencyData>>GetData(string name)
-        {
-            var result = await _cacs.GetCryptoData(name);
-            return Ok(result);
-        }
-
         // GET: api/<CryptocurrencyController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cryptocurrency>>> Get()
