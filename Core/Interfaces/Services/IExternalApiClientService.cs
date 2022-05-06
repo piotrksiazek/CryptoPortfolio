@@ -8,6 +8,10 @@ namespace Core.Interfaces.Services
 {
     public interface IExternalApiClientService
     {
-        public HttpClient ApiClient { get; set; }
+        /// <summary>
+        /// Calls resource and parses it to json
+        /// </summary>
+        /// <returns>json</returns>
+        public Task<string?> Get(string url);
     }
 }

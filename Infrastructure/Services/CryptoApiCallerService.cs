@@ -23,20 +23,12 @@ namespace Infrastructure.Services
         {
             string url = _coinGeckoBaseUri + "coins" + "/" + name;
 
-            using (HttpResponseMessage response = await _httpClient.ApiClient.GetAsync(url))
+            string? json = await _httpClient.Get(url);
+            if (json != null)
             {
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    if(json != null)
-                    {
-                        CryptocurrencyData? crypto = JsonSerializer.Deserialize<CryptocurrencyData>(json);
-                        return crypto;
-                    }
-
-                }
-                return null;
+                return JsonSerializer.Deserialize<CryptocurrencyData>(json);
             }
+            return null;
         }
 
         public async Task<double> GetCryptoPrice(string name)
@@ -44,7 +36,6 @@ namespace Infrastructure.Services
             var result = await GetCryptoData(name);
 
             return result.market_data.current_price.usd;
-
         }
     }
 }

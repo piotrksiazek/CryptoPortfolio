@@ -9,15 +9,32 @@ namespace Infrastructure.Services
 {
     public class ExternalApiClientService : IExternalApiClientService
     {
-        public HttpClient ApiClient { get; set; }
+        private HttpClient _apiClient;
 
         public ExternalApiClientService()
         {
-            if (ApiClient == null)
+            if (_apiClient == null)
             {
-                ApiClient = new HttpClient();
-                ApiClient.DefaultRequestHeaders.Accept.Clear();
-                ApiClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                _apiClient = new HttpClient();
+                _apiClient.DefaultRequestHeaders.Accept.Clear();
+                _apiClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            }
+        }
+
+        public async Task<string?> Get(string url)
+        {
+            using (HttpResponseMessage response = await _apiClient.GetAsync(url))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    if (json != null)
+                    {
+                        return json;
+                    }
+
+                }
+                return null;
             }
         }
     }
