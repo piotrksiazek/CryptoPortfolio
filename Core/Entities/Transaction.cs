@@ -10,12 +10,10 @@ namespace Core.Entities
 {
     public class Transaction : IOwnedByUser
     {
-        public int Id { get; set; }
         [Required]
         public decimal UnitPrice { get; set; }
         [Required]
         public decimal Amount { get; set; }
-        public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }
         [Required]
         public int CryptocurrencyId { get; set; }

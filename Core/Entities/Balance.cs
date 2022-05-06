@@ -11,11 +11,9 @@ namespace Core.Entities
 {
     public class Balance : IOwnedByUser
     {
-        public int Id { get; set; }
         [Required]
         public decimal Amount { get; set; }
         [Required]
-        public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }
         [Required]
         public int CryptocurrencyId { get; set; }

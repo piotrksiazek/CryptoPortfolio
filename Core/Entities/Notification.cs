@@ -10,14 +10,10 @@ namespace Core.Entities
 {
     public class Notification : IOwnedByUser
     {
-        [Required]
-        public int Id { get; set; }
         public double PricePoint { get; set; }
         public bool GreaterThanOrEqual { get; set; }
         [Required]
         public bool IsRecurring { get; set; }
-        [Required]
-        public string AppUserId { get; set; }
         [Required]
         public AppUser AppUser { get; set; }
         [Required]

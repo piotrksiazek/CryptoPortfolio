@@ -11,11 +11,8 @@ namespace Core.Entities
 {
     public class Wallet : IOwnedByUser
     {
-        public int Id { get; set; }
         [Required]
         public string Address { get; set; }
-        [Required]
-        public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }
         [Required]
         public int WalletTypeId { get; set; }
