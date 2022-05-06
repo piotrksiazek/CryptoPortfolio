@@ -9,7 +9,7 @@ namespace Core.Interfaces
 {
     public interface ICryptoWalletCallerService
     {
-        public Task<List<Transaction>> GetTransactionList(string address, Cryptocurrency crypto, string appUserId);
-        public Task<decimal> GetWalletBalance(string address, Cryptocurrency crypto);
+        public Task<List<Transaction>?> GetTransactionList(string address, Cryptocurrency crypto, string appUserId);
+        public Task<decimal?> GetWalletBalance(string address, Cryptocurrency crypto);
     }
 }

@@ -48,6 +48,8 @@ namespace Api.Controllers
         {
             var userId = _claimsRetriever.GetUserId(HttpContext);
             var crypto = await _unitOfWork.CryptoCurrencyRepository.Get(cryptoId);
+            if(crypto == null)
+                return NotFound($"Crypto with id: {cryptoId} not found");
             var transactions = await _cryptoWalletCallerService.GetTransactionList(address, crypto, userId);
             return Ok(transactions);
         }

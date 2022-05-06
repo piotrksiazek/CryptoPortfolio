@@ -55,6 +55,8 @@ namespace Api.Controllers
         public async Task<ActionResult<decimal>> GetWithAddress(string address, int cryptoId)
         {
             var crypto = await _unitOfWork.CryptoCurrencyRepository.Get(cryptoId);
+            if (crypto == null)
+                return NotFound($"Crypto with id: {cryptoId} not found");
             var balance = await _cryptoWalletCallerService.GetWalletBalance(address, crypto);
             if(balance == null)
                 return NotFound();
