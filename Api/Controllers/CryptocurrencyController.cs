@@ -13,11 +13,13 @@ namespace Api.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICryptoApiCallerService _cacs;
+        private readonly ICryptoApiCallerService _cryptoApiCallerService;
 
-        public CryptocurrencyController(IUnitOfWork unitOfWork, ICryptoApiCallerService cacs)
+        public CryptocurrencyController(IUnitOfWork unitOfWork, ICryptoApiCallerService cacs, ICryptoApiCallerService cryptoApiCallerService)
         {
             _unitOfWork = unitOfWork;
             _cacs = cacs;
+            _cryptoApiCallerService = cryptoApiCallerService;
         }
 
         // GET: api/<CryptocurrencyController>
@@ -37,6 +39,14 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
+            return Ok(result);
+        }
+
+        // GET api/<CryptocurrencyController>/5
+        [HttpGet("price/{coingeckoId}")]
+        public async Task<ActionResult<string>> GetPrice(string coingeckoId)
+        {
+            var result = await _cryptoApiCallerService.GetCryptoPrice(coingeckoId);
             return Ok(result);
         }
 
