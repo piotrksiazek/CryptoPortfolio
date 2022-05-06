@@ -18,6 +18,7 @@ namespace Tests
         public Mock<IUnitOfWork> UnitOfWorkMock = new Mock<IUnitOfWork>();
         public Mock<IBalanceService> BalanceServiceMock = new Mock<IBalanceService>();
         public Mock<IClaimsRetriever> CaimsRetrieverMock = new Mock<IClaimsRetriever>();
+        public Mock<ICryptoWalletCallerService> CryptoWalletCallerServiceMock = new Mock<ICryptoWalletCallerService>();
     }
     public class TransactionControllerTests
     {
@@ -28,7 +29,7 @@ namespace Tests
             var objects = new TransactionBasicSetup();
             objects.UnitOfWorkMock.Setup(uow => uow.TransactionRepository.GetUserTransactions(It.IsAny<string>())).ReturnsAsync((List<Transaction>)null);
             objects.CaimsRetrieverMock.Setup(cr => cr.GetUserId(It.IsAny<HttpContext>())).Returns(It.IsAny<string>());
-            var controller = new TransactionController(objects.UnitOfWorkMock.Object, objects.BalanceServiceMock.Object, objects.CaimsRetrieverMock.Object);
+            var controller = new TransactionController(objects.UnitOfWorkMock.Object, objects.BalanceServiceMock.Object, objects.CaimsRetrieverMock.Object, objects.CryptoWalletCallerServiceMock.Object);
             //Act
             var result = await controller.GetTransactions();
 
@@ -43,7 +44,7 @@ namespace Tests
             var objects = new TransactionBasicSetup();
             objects.UnitOfWorkMock.Setup(uow => uow.TransactionRepository.GetUserTransactions(It.IsAny<string>())).ReturnsAsync(new List<Transaction> { new Transaction() });
             objects.CaimsRetrieverMock.Setup(cr => cr.GetUserId(It.IsAny<HttpContext>())).Returns(It.IsAny<string>());
-            var controller = new TransactionController(objects.UnitOfWorkMock.Object, objects.BalanceServiceMock.Object, objects.CaimsRetrieverMock.Object);
+            var controller = new TransactionController(objects.UnitOfWorkMock.Object, objects.BalanceServiceMock.Object, objects.CaimsRetrieverMock.Object, objects.CryptoWalletCallerServiceMock.Object);
             //Act
             var result = await controller.GetTransactions();
 

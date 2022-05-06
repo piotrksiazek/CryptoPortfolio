@@ -23,7 +23,7 @@ namespace Infrastructure.Services
         {
             string url = _coinGeckoBaseUri + "coins" + "/" + name;
 
-            string? json = await _httpClient.Get(url);
+            string? json = await _httpClient.GetAsync(url);
             if (json != null)
             {
                 return JsonSerializer.Deserialize<CryptocurrencyData>(json);

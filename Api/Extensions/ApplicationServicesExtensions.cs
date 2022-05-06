@@ -26,6 +26,7 @@ namespace Api.Extensions
             services.AddSingleton<IExternalApiClientService, ExternalApiClientService>();
             services.AddSingleton<ICryptoApiCallerService, CryptoApiCallerService>();
             services.AddSingleton<IPriceChangeNotificationService, PriceChangeNotificationService>();
+            services.AddSingleton<ICryptoWalletCallerService, CryptoWalletCallerService>();
 
             services.AddHostedService<PriceChangeNotificationServiceRunner>();
 

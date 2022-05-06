@@ -21,7 +21,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<string?> Get(string url)
+        public async Task<string?> GetAsync(string url)
         {
             using (HttpResponseMessage response = await _apiClient.GetAsync(url))
             {

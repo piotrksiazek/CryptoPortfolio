@@ -19,25 +19,36 @@ namespace Api.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBalanceService _balanceService;
         private readonly IClaimsRetriever _claimsRetriever;
+        private readonly ICryptoWalletCallerService _cryptoWalletCallerService;
 
-        public TransactionController(IUnitOfWork unitOfWork, IBalanceService balanceService, IClaimsRetriever claimsRetriever)
+        public TransactionController(IUnitOfWork unitOfWork, IBalanceService balanceService, IClaimsRetriever claimsRetriever, ICryptoWalletCallerService cryptoWalletCallerService)
         {
             _unitOfWork = unitOfWork;
             _balanceService = balanceService;
             _claimsRetriever = claimsRetriever;
+            _cryptoWalletCallerService = cryptoWalletCallerService;
         }
 
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<Transaction>>> GetTransactions()
         {
-            //add paging
             var userId = _claimsRetriever.GetUserId(HttpContext);
             var transactions = await _unitOfWork.TransactionRepository.GetUserTransactions(userId);
-            if(transactions == null)
+            if (transactions == null)
             {
                 return NotFound();
             }
+            return Ok(transactions);
+        }
+
+        [Authorize]
+        [HttpGet("address/{cryptoId}/{address}")]
+        public async Task<ActionResult<List<Transaction>>> GetTransactions(int cryptoId, string address)
+        {
+            var userId = _claimsRetriever.GetUserId(HttpContext);
+            var crypto = await _unitOfWork.CryptoCurrencyRepository.Get(cryptoId);
+            var transactions = await _cryptoWalletCallerService.GetTransactionList(address, crypto, userId);
             return Ok(transactions);
         }
 

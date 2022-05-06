@@ -9,6 +9,7 @@ namespace Core.Interfaces
 {
     public interface ICryptoWalletCallerService
     {
-        WalletData? GetWalletData(string address, string cryptocurrencyName);
+        public Task<List<Transaction>> GetTransactionList(string address, Cryptocurrency crypto, string appUserId);
+        public Task<decimal> GetWalletBalance(string address, Cryptocurrency crypto);
     }
 }

@@ -12,6 +12,6 @@ namespace Core.Interfaces.Services
         /// Calls resource and parses it to json
         /// </summary>
         /// <returns>json</returns>
-        public Task<string?> Get(string url);
+        public Task<string?> GetAsync(string url);
     }
 }
